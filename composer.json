@@ -1,0 +1,20 @@
+{
+    "name": "remcodex/router",
+    "description": "Remote code execution router",
+    "type": "library",
+    "licence": "MIT",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "ext-json": "*",
+        "react/http": "^1.2",
+        "ahmard/reactphp-timers": "^1.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.65"
+    },
+    "autoload": {
+        "psr-4": {
+            "Remcodex\\Router\\": "src/"
+        }
+    }
+}

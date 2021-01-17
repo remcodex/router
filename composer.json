@@ -2,7 +2,7 @@
     "name": "remcodex/router",
     "description": "Remote code execution router",
     "type": "library",
-    "licence": "MIT",
+    "license": "MIT",
     "require": {
         "php": "^7.4 || ^8.0",
         "ext-json": "*",

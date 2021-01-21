@@ -21,13 +21,16 @@ $server = Server::listen($serverUri);
 $server->addRemoteServer(
     //1
     RemoteServer::create('localhost:9110')
-        ->protocol(RemoteServer::UNSECURE),
+        ->protocol(RemoteServer::UNSECURE)
+        ->path('api/http/request'),
     //2
     RemoteServer::create('localhost:9111')
-        ->protocol(RemoteServer::UNSECURE),
+        ->protocol(RemoteServer::UNSECURE)
+        ->path('api/http/request'),
     //3
     RemoteServer::create('localhost:9112')
-        ->protocol(RemoteServer::UNSECURE),
+        ->protocol(RemoteServer::UNSECURE)
+        ->path('api/http/request'),
 );
 
 //Add error handler

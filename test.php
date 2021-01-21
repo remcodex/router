@@ -9,15 +9,18 @@ $server = Server::listen('0.0.0.0:9000');
 
 //Add remote server
 $server->addRemoteServer(
-//1
+    //1
     RemoteServer::create('localhost:9110')
-        ->protocol(RemoteServer::UNSECURE),
+        ->protocol(RemoteServer::UNSECURE)
+        ->path('api/http/request'),
     //2
     RemoteServer::create('localhost:9111')
-        ->protocol(RemoteServer::UNSECURE),
+        ->protocol(RemoteServer::UNSECURE)
+        ->path('api/http/request'),
     //3
     RemoteServer::create('localhost:9112')
-        ->protocol(RemoteServer::UNSECURE),
+        ->protocol(RemoteServer::UNSECURE)
+        ->path('api/http/request'),
 );
 
 //Add error handler

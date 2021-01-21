@@ -30,6 +30,6 @@ class ErrorHandler
             $additionalErrorHandler($exception);
         }
 
-        echo PHP_EOL . $exception . PHP_EOL . PHP_EOL;
+        echo json_encode($exception);
     }
 }

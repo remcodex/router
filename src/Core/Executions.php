@@ -28,6 +28,7 @@ class Executions
         $availableServer->incrementTotalConnections();
 
         $browser = new Browser(getLoop());
+
         return $browser->post($serverUri, [], $client->getRequestData());
     }
 

@@ -4,6 +4,8 @@
 namespace Remcodex\Router;
 
 
+use Nette\Utils\Json;
+use Nette\Utils\JsonException;
 use Psr\Http\Message\ResponseInterface;
 
 class Response
@@ -14,22 +16,59 @@ class Response
      */
     public static function success($data): ResponseInterface
     {
+
+        return self::respond(200, true, $data);
+    }
+
+    /**
+     * @param int $statusCode
+     * @param bool $success
+     * @param mixed $data
+     * @return ResponseInterface
+     * @throws JsonException
+     */
+    public static function respond(int $statusCode, bool $success, $data): ResponseInterface
+    {
         return self::json([
-            'status' => 200,
-            'success' => true,
+            'responder' => 'rce.router',
+            'status' => $statusCode,
+            'success' => $success,
             'data' => $data,
         ]);
     }
 
     /**
      * @param array|object $data
+     * @param bool $shouldEncode
      * @return ResponseInterface
+     * @throws JsonException
      */
-    public static function json($data): ResponseInterface
+    public static function json($data, bool $shouldEncode = true): ResponseInterface
     {
+        if ($shouldEncode) {
+            $data = Json::encode($data);
+        }
+
         return new \React\Http\Message\Response(200, [
             'content-type' => 'application/json',
-        ], json_encode($data));
+        ], $data);
+    }
+
+    /**
+     * This method send response with data as it is, no success, status or data attributes will added
+     * @param mixed $data
+     * @param bool $shouldEncode
+     * @return ResponseInterface
+     * @throws JsonException
+     */
+    public static function with($data, bool $shouldEncode = true): ResponseInterface
+    {
+        return self::json($data, $shouldEncode);
+    }
+
+    public static function internalServerError(string $message): ResponseInterface
+    {
+        return self::error($message);
     }
 
     /**
@@ -39,10 +78,6 @@ class Response
      */
     public static function error($data, int $statusCode = 500): ResponseInterface
     {
-        return self::json([
-            'status' => $statusCode,
-            'success' => false,
-            'data' => $data,
-        ]);
+        return self::respond($statusCode, false, $data);
     }
 }

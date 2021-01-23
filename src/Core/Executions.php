@@ -4,8 +4,10 @@
 namespace Remcodex\Router\Core;
 
 
+use Nette\Utils\Json;
 use React\Http\Browser;
 use React\Promise\PromiseInterface;
+use Remcodex\Router\Payload;
 
 class Executions
 {
@@ -29,7 +31,8 @@ class Executions
 
         $browser = new Browser(getLoop());
 
-        return $browser->post($serverUri, [], $client->getRequestData());
+        $requestData = Json::encode(Payload::parsedBody());
+        return $browser->post($serverUri, [], $requestData);
     }
 
     public static function findServerWithLowestConnections(array $arrays): array

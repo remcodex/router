@@ -8,11 +8,13 @@ use React\EventLoop\Factory;
 use React\EventLoop\LoopInterface;
 use React\Http\Server as ReactHttpServer;
 use React\Socket\Server as ReactSocketServer;
-use Remcodex\Router\Core\Middlewares\Router;
-use Remcodex\Router\Core\Middlewares\ValidateRequestData;
+use Remcodex\Router\Core\Middlewares\DecodeAndValidateRequestDataMiddleware;
 
 class Server
 {
+    public const ENV_PRODUCTION = 'production';
+    public const ENV_DEVELOPMENT = 'development';
+
     protected string $uri;
     protected LoopInterface $eventLoop;
     protected ReactHttpServer $httpServer;
@@ -33,6 +35,7 @@ class Server
 
     public function __construct(string $uri)
     {
+        set_exception_handler(ErrorHandler::create());
         $this->uri = $uri;
     }
 
@@ -116,8 +119,8 @@ class Server
         }
 
         //Add router to middlewares
-        $this->addMiddleware(new ValidateRequestData());
-        $this->addMiddleware(new Router(...$this->remoteServers));
+        $this->addMiddleware(new DecodeAndValidateRequestDataMiddleware());
+        $this->addMiddleware(new RequestHandler($this->remoteServers));
 
         $server = $this->getHttpServer();
         $server->on('error', ErrorHandler::create($this->errorHandler));

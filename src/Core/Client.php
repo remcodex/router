@@ -5,18 +5,19 @@ namespace Remcodex\Router\Core;
 
 
 use Psr\Http\Message\ServerRequestInterface;
+use Remcodex\Router\Payload;
 
 class Client
 {
     private int $id;
-    private string $requestData;
+    private array $requestData;
     private string $clientIP;
     private string $clientPort;
 
     public function __construct(ServerRequestInterface $request)
     {
         $this->id = spl_object_id($this);
-        $this->requestData = $request->getParsedBody()['data'];
+        $this->requestData = Payload::guzwrap();
         $this->clientIP = $request->getServerParams()['REMOTE_ADDR'];
         $this->clientPort = $request->getServerParams()['REMOTE_PORT'];
     }
@@ -50,10 +51,7 @@ class Client
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getRequestData(): string
+    public function getRequestData(): array
     {
         return $this->requestData;
     }

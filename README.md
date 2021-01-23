@@ -1,13 +1,22 @@
 # RCE Router
-Remote code execution router/load balancer - Checks which [RCE Server](https://github.com/remcodex/server) has the lowest connections and sends the client request to it.
 
+Remote code execution router/load balancer - Checks which [RCE Server](https://github.com/remcodex/server) has the
+lowest connections and sends the client request to it.
+
+## Notice 🔊
+
+This project is currently receiving massive updates, which may include code refactoring, namespace change, and many
+other stuffs that may cause the code to brake or not work entirely.<br/>
+**This project is not ready!!!**
 
 ## Installation
+
 ```bash
 composer require remcodex/router
 ```
 
 ## Usage
+
 ```php
 use Remcodex\Router\RemoteServer;
 use Remcodex\Router\Server;

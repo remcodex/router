@@ -23,13 +23,15 @@ class ErrorHandler
         return new ErrorHandler($callback);
     }
 
+    public static function handle(Throwable $exception): void
+    {
+
+    }
+
     public function __invoke(Throwable $exception): void
     {
-        if (isset($this->additionalErrorHandler)) {
-            $additionalErrorHandler = $this->additionalErrorHandler;
-            $additionalErrorHandler($exception);
-        }
-
-        echo json_encode($exception);
+        $f = fopen('php://stdout', 'w');
+        fwrite($f, $exception->__toString());
+        echo($exception->getMessage());
     }
 }

@@ -13,7 +13,6 @@ use Remcodex\Router\Core\Executions;
 use Remcodex\Router\RemoteServer;
 use Remcodex\Router\Response;
 use Throwable;
-use function React\Promise\resolve;
 
 class Router
 {
@@ -29,7 +28,8 @@ class Router
 
         return Executions::add($client)->then(
             function (ResponseInterface $response) {
-                return Response::success($response->getBody()->getContents());
+                $result = $response->getBody()->getContents();
+                return Response::with($result, false);
             },
             function (Throwable $exception) {
                 return Response::error((string)$exception->getMessage());

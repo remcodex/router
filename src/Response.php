@@ -66,6 +66,11 @@ class Response
         return self::json($data, $shouldEncode);
     }
 
+    /**
+     * @param string $message
+     * @return ResponseInterface
+     * @throws JsonException
+     */
     public static function internalServerError(string $message): ResponseInterface
     {
         return self::error($message);
@@ -75,6 +80,7 @@ class Response
      * @param mixed $data
      * @param int $statusCode
      * @return ResponseInterface
+     * @throws JsonException
      */
     public static function error($data, int $statusCode = 500): ResponseInterface
     {

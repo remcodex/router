@@ -1,35 +1,46 @@
 <?php
 
 
-namespace Remcodex\Router;
+namespace Remcodex\Router\Middlewares;
 
 
+use Closure;
 use Exception;
+use Nette\Utils\JsonException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use React\Http\Message\Response;
+use React\Http\Message\Response as ReactResponse;
 use React\Promise\PromiseInterface;
-use Remcodex\Router\Core\Middlewares\Router;
+use Remcodex\Router\AvailableServers;
+use Remcodex\Router\Config;
+use Remcodex\Router\ErrorHandler;
+use Remcodex\Router\Response;
+use Remcodex\Router\Server;
 use Throwable;
 
-class RequestHandler
+class ResponseGeneratorMiddleware
 {
-    private array $remoteServers;
-
     public function __construct(array $remoteServers)
     {
-        $this->remoteServers = $remoteServers;
+        AvailableServers::add(...$remoteServers);
     }
 
-    public function __invoke(ServerRequestInterface $request): PromiseInterface
+    /**
+     * @param ServerRequestInterface $request
+     * @param Closure $next
+     * @return PromiseInterface
+     * @throws JsonException
+     */
+    public function __invoke(ServerRequestInterface $request, Closure $next): PromiseInterface
     {
-        $response = (new Router(...$this->remoteServers))->__invoke($request);
+        $response = $next($request); // Execute all middlewares and handle final response
         return $this->generateProperResponse($response);
     }
 
     /**
      * @param mixed $response
-     * @return mixed|ResponseInterface|Response
+     * @return mixed|ResponseInterface|ReactResponse
+     * @throws JsonException
      */
     public function generateProperResponse($response)
     {
@@ -41,7 +52,7 @@ class RequestHandler
                 function ($returnedResponse) {
                     return $this->generateProperResponse($returnedResponse);
                 });
-        } elseif (!$response instanceof Response) {
+        } elseif (!$response instanceof ReactResponse) {
             //Let's see if object is callable
             if (is_callable($response)) {
                 return $this->generateProperResponse($response());
@@ -51,19 +62,20 @@ class RequestHandler
                 switch ($response) {
                     case ($response instanceof Throwable):
                         if (Server::ENV_DEVELOPMENT == Config::environment()) {
-                            $response = \Remcodex\Router\Response::success($response);
+                            $response = Response::success($response);
                         } else {
-                            $response = \Remcodex\Router\Response::internalServerError('Server returns an unexpected response, please check server logs');
-                            //handleApplicationException($response);
+                            $message = 'Server returns an unexpected response, please check server logs';
+                            $response = Response::internalServerError($message);
+                            ErrorHandler::handle(new Exception($message));
                         }
                         break;
                     case (is_scalar($response) || is_array($response)):
-                        $response = \Remcodex\Router\Response::success($response);
+                        $response = Response::success($response);
                         break;
                     default:
                         $message = "Server returns an unexpected response.";
                         ErrorHandler::handle(new Exception($message));
-                        $response = \Remcodex\Router\Response::internalServerError($message);
+                        $response = Response::internalServerError($message);
                         break;
                 }
             }

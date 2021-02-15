@@ -52,4 +52,6 @@ echo "Server starting at: http://{$serverUri}\n";
 $server->start();
 ```
 
+**Note:** [Remote Servers](https://github.com/remcodex/server#usage) must be started for each address registered above.
+
 Built with [ReactPHP](https://reactphp.org)

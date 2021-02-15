@@ -13,6 +13,7 @@ class Response
     /**
      * @param mixed $data
      * @return ResponseInterface
+     * @throws JsonException
      */
     public static function success($data): ResponseInterface
     {

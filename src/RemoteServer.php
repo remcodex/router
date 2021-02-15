@@ -22,6 +22,7 @@ class RemoteServer
     private string $hostAddress;
     private string $protocol = 'http://';
     private ?string $httpPath = null;
+    private string $geoLocation;
 
     public function __construct(string $hostAddress)
     {
@@ -39,6 +40,11 @@ class RemoteServer
         return new RemoteServer($hostAddress);
     }
 
+    /**
+     * Server api route path
+     * @param string $httpPath
+     * @return $this
+     */
     public function path(string $httpPath): RemoteServer
     {
         $this->httpPath = $httpPath;
@@ -53,6 +59,17 @@ class RemoteServer
     public function protocol(string $protocol): RemoteServer
     {
         $this->protocol = $protocol;
+        return $this;
+    }
+
+    /**
+     * Set server geographic location
+     * @param string $location Server continent.country, example: africa.nigeria
+     * @return RemoteServer
+     */
+    public function geoLocation(string $location): RemoteServer
+    {
+        $this->geoLocation = $location;
         return $this;
     }
 

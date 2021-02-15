@@ -1,11 +1,13 @@
 <?php
 
 
-namespace Remcodex\Router\Core\Middlewares;
+namespace Remcodex\Router\Middlewares;
 
 
+use Nette\Utils\JsonException;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Promise\PromiseInterface;
+use Remcodex\Router\Context;
 use Remcodex\Router\Exceptions\InvalidPayloadException;
 use Remcodex\Router\Payload;
 use Remcodex\Router\Response;
@@ -13,13 +15,20 @@ use function React\Promise\resolve;
 
 class DecodeAndValidateRequestDataMiddleware
 {
+    /**
+     * @param ServerRequestInterface $request
+     * @param callable $next
+     * @return PromiseInterface
+     * @throws JsonException
+     */
     public function __invoke(ServerRequestInterface $request, callable $next): PromiseInterface
     {
         try {
-            Payload::init($request);
+            $payload = new Payload($request);
+            Context::setPayload($request, $payload);
 
             //Check guzwrap request data
-            if (empty(Payload::guzwrap())) {
+            if (empty($payload->getGuzwrap())) {
                 InvalidPayloadException::create('guzwrap request data');
             }
 

@@ -1,11 +1,10 @@
 <?php
 
 
-namespace Remcodex\Router\Core;
+namespace Remcodex\Router;
 
 
 use Exception;
-use Remcodex\Router\RemoteServer;
 
 class AvailableServers
 {

@@ -1,19 +1,25 @@
 <?php
 
 
-namespace Remcodex\Router\Core;
+namespace Remcodex\Router;
 
 
+use Exception;
 use Nette\Utils\Json;
+use Nette\Utils\JsonException;
 use React\Http\Browser;
 use React\Promise\PromiseInterface;
-use Remcodex\Router\Payload;
 
 class Executions
 {
-    private static array $clients;
-
-    public static function add(Client $client): PromiseInterface
+    /**
+     * Add execution
+     * @param Payload $payload
+     * @return PromiseInterface
+     * @throws JsonException
+     * @throws Exception
+     */
+    public static function add(Payload $payload): PromiseInterface
     {
         $connections = [];
         foreach (AvailableServers::getServers() as $remoteServer) {
@@ -31,7 +37,7 @@ class Executions
 
         $browser = new Browser(getLoop());
 
-        $requestData = Json::encode(Payload::parsedBody());
+        $requestData = Json::encode($payload->parsedBody());
         return $browser->post($serverUri, [], $requestData);
     }
 

@@ -9,22 +9,27 @@ $server = Server::listen('0.0.0.0:9000');
 
 //Add remote server
 $server->addRemoteServer(
-//1
+    //1
     RemoteServer::create('localhost:9110')
         ->protocol(RemoteServer::UNSECURE)
-        ->path('api/http/request'),
+        ->path('api/http/request')
+        ->geoLocation('africa.nigeria'),
     //2
     RemoteServer::create('localhost:9111')
         ->protocol(RemoteServer::UNSECURE)
-        ->path('api/http/request'),
+        ->path('api/http/request')
+        ->geoLocation('asia.indonesia'),
     //3
     RemoteServer::create('localhost:9112')
         ->protocol(RemoteServer::UNSECURE)
-        ->path('api/http/request'),
+        ->path('api/http/request')
+        ->geoLocation('europe.england'),
 );
 
+$server->command(__DIR__ . '/commands.php');
+
 //Add error handler
-$server->onError(function (Throwable $exception) {
+$server->onError(function () {
     echo "Error occurred";
 });
 

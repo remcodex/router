@@ -1,11 +1,10 @@
 <?php
 
 
-namespace Remcodex\Router\Core;
+namespace Remcodex\Router;
 
 
 use Psr\Http\Message\ServerRequestInterface;
-use Remcodex\Router\Payload;
 
 class Client
 {
@@ -17,7 +16,7 @@ class Client
     public function __construct(ServerRequestInterface $request)
     {
         $this->id = spl_object_id($this);
-        $this->requestData = Payload::guzwrap();
+        $this->requestData = Context::getPayload($request)->getGuzwrap();
         $this->clientIP = $request->getServerParams()['REMOTE_ADDR'];
         $this->clientPort = $request->getServerParams()['REMOTE_PORT'];
     }

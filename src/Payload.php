@@ -11,52 +11,59 @@ use Remcodex\Router\Exceptions\InvalidPayloadException;
 
 class Payload
 {
-    private static array $parsedBody;
-    private static array $guzwrapRequestData;
-    private static string $command;
-    private static int $time;
+    private ServerRequestInterface $request;
+    private array $parsedBody;
+    private array $guzwrapRequestData;
 
 
     /**
      * @param ServerRequestInterface $request
      * @throws InvalidPayloadException|JsonException
      */
-    public static function init(ServerRequestInterface $request): void
+    public function __construct(ServerRequestInterface $request)
     {
-        self::$parsedBody = (array)$request->getParsedBody();
-        self::$guzwrapRequestData = Json::decode(self::$parsedBody['guzwrap'], Json::FORCE_ARRAY) ?? [];
+        $this->request = $request;
+        $this->parsedBody = (array)$request->getParsedBody();
+        $this->guzwrapRequestData = Json::decode($this->parsedBody['guzwrap'], Json::FORCE_ARRAY) ?? [];
 
         //Check request command
-        if (!isset(self::$parsedBody['command'])) {
+        if (!isset($this->parsedBody['command'])) {
             InvalidPayloadException::create('command');
         }
 
         //Check request time
-        if (!isset(self::$parsedBody['time'])) {
+        if (!isset($this->parsedBody['time'])) {
             InvalidPayloadException::create('time');
         }
-
-        self::$command = self::$parsedBody['command'];
-        self::$time = self::$parsedBody['time'];
     }
 
-    public static function guzwrap(): array
+    public function getRequest(): ServerRequestInterface
     {
-        return self::$guzwrapRequestData;
+        return $this->request;
     }
 
-    public static function command(): string
+    public function getGuzwrap(): array
     {
-        return self::$command;
+        return $this->guzwrapRequestData;
     }
 
-    public static function time(): int
+    public function getCommand(): string
     {
-        return self::$time;
+        return $this->parsedBody['command'];
     }
 
-    public static function parsedBody(): array
+    public function getRouter(): array
     {
-        return self::$parsedBody;
+        return $this->parsedBody['router'] ?? [];
+    }
+
+    public function getTime(): int
+    {
+        return $this->parsedBody['time'];
+    }
+
+    public function parsedBody(): array
+    {
+        return $this->parsedBody;
     }
 }

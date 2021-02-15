@@ -8,7 +8,9 @@ use React\EventLoop\Factory;
 use React\EventLoop\LoopInterface;
 use React\Http\Server as ReactHttpServer;
 use React\Socket\Server as ReactSocketServer;
-use Remcodex\Router\Core\Middlewares\DecodeAndValidateRequestDataMiddleware;
+use Remcodex\Router\Middlewares\CommandRoutingMiddleware;
+use Remcodex\Router\Middlewares\DecodeAndValidateRequestDataMiddleware;
+use Remcodex\Router\Middlewares\ResponseGeneratorMiddleware;
 
 class Server
 {
@@ -31,6 +33,8 @@ class Server
      * @var callable $errorHandler
      */
     protected $errorHandler = null;
+
+    protected string $commandFilePath;
 
 
     public function __construct(string $uri)
@@ -108,6 +112,17 @@ class Server
     }
 
     /**
+     * Set server command definition file path
+     * @param string $filePath
+     * @return Server
+     */
+    public function command(string $filePath): Server
+    {
+        $this->commandFilePath = $filePath;
+        return $this;
+    }
+
+    /**
      * Starts routing servers
      * @throws Exception
      */
@@ -120,7 +135,8 @@ class Server
 
         //Add router to middlewares
         $this->addMiddleware(new DecodeAndValidateRequestDataMiddleware());
-        $this->addMiddleware(new RequestHandler($this->remoteServers));
+        $this->addMiddleware(new ResponseGeneratorMiddleware($this->remoteServers));
+        $this->addMiddleware(new CommandRoutingMiddleware($this->commandFilePath));
 
         $server = $this->getHttpServer();
         $server->on('error', ErrorHandler::create($this->errorHandler));
@@ -171,5 +187,4 @@ class Server
 
         return $this->socketServer;
     }
-
 }

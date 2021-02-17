@@ -24,11 +24,14 @@ class Payload
     {
         $this->request = $request;
         $this->parsedBody = (array)$request->getParsedBody();
-        $this->guzwrapRequestData = Json::decode($this->parsedBody['guzwrap'], Json::FORCE_ARRAY) ?? [];
 
         //Check request command
         if (!isset($this->parsedBody['command'])) {
             InvalidPayloadException::create('command');
+        }
+
+        if (isset($this->parsedBody['guzwrap'])) {
+            $this->guzwrapRequestData = Json::decode($this->parsedBody['guzwrap'], Json::FORCE_ARRAY) ?? [];
         }
 
         //Check request time

@@ -4,7 +4,9 @@
 namespace Remcodex\Router;
 
 
-class RemoteServer
+use JsonSerializable;
+
+class RemoteServer implements JsonSerializable
 {
     /**
      * Will indicate to force use secure protocol to connect to this server.
@@ -135,5 +137,26 @@ class RemoteServer
         }
 
         return $serverUri = self::UNSECURE_HTTP_PROTOCOL . $this->hostAddress . '/' . $this->httpPath;
+    }
+
+    public function getGeoLocation(): string
+    {
+        return $this->geoLocation;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'activeConnections' => $this->activeConnections,
+            'totalConnections' => $this->totalConnections,
+            'hostAddress' => $this->hostAddress,
+            'httpPath' => $this->httpPath,
+            'protocol' => $this->protocol,
+            'geoLocation' => $this->geoLocation,
+        ];
     }
 }

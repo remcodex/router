@@ -20,6 +20,6 @@ class ResponseFactory
         return Response::error([
             'code' => 'cmd.404',
             'message' => "Command \"{$payload->getCommand()}\" does not exists",
-        ]);
+        ], 404);
     }
 }

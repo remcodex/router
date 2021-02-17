@@ -12,7 +12,7 @@ use function React\Promise\resolve;
 
 class ServerListener
 {
-    public function list(Payload $payload): PromiseInterface
+    public function list(): PromiseInterface
     {
         return resolve(Response::success(AvailableServers::getServers()));
     }

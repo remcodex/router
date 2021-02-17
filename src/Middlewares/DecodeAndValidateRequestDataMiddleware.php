@@ -27,11 +27,6 @@ class DecodeAndValidateRequestDataMiddleware
             $payload = new Payload($request);
             Context::setPayload($request, $payload);
 
-            //Check guzwrap request data
-            if (empty($payload->getGuzwrap())) {
-                InvalidPayloadException::create('guzwrap request data');
-            }
-
             return $next($request);
         } catch (InvalidPayloadException $e) {
             return resolve(Response::error($e->getMessage()));
